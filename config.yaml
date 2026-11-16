@@ -1,0 +1,103 @@
+# PurushTradingAIAgents default configuration.
+# Everything here is adjustable at runtime from the Control screen; this file is the seed.
+
+paper_book_inr: 1000000
+
+universe:
+  swing: NIFTY50          # NIFTY50 | NIFTY100 | custom
+  intraday: NIFTY50_LIQUID15
+  custom: []
+
+modules:
+  swing:
+    enabled: true
+    decision_bar: 1d
+    decision_time_ist: "15:35"
+    fill_at: next_open
+  intraday:
+    enabled: true
+    decision_bar: 5m
+    entries_window_ist: ["09:30", "14:45"]
+    square_off_ist: "15:10"
+    fill_at: next_tick
+    llm_top_n_per_bar: 3
+
+feeds:
+  primary: angelone
+  secondary: upstox
+  fallback: yfinance
+  failover_after_ms: 1500
+  archive_ticks: true
+
+bars:
+  intervals: ["1m", "5m", "1h", "1d"]
+
+risk:
+  swing:
+    max_risk_per_trade_pct: 1.0
+    max_position_pct: 5.0
+    max_sector_pct: 20.0
+    max_open_positions: 8
+    max_gross_exposure_pct: 80.0
+    daily_loss_limit_pct: null
+    drawdown_halt_pct: 10.0
+    stop_atr_min: 0.5
+    stop_atr_max: 3.0
+    min_reward_risk: 1.5
+    min_avg_turnover_cr: 50
+    results_blackout_days: 2
+    ensemble_floor: 0.60
+    model_max_age_days: 14
+  intraday:
+    max_risk_per_trade_pct: 0.5
+    max_position_pct: 10.0
+    max_sector_pct: 20.0
+    max_open_positions: 4
+    max_gross_exposure_pct: 100.0
+    daily_loss_limit_pct: 2.0
+    drawdown_halt_pct: 10.0
+    stop_atr_min: 0.5
+    stop_atr_max: 3.0
+    min_reward_risk: 1.2
+    min_avg_turnover_cr: 200
+    results_blackout_days: 0
+    ensemble_floor: 0.65
+    model_max_age_days: 7
+
+fees:
+  brokerage_per_order_inr: 0.0     # discount brokers charge 0 on delivery; set 20 for intraday if applicable
+  brokerage_intraday_pct: 0.03
+  brokerage_intraday_cap_inr: 20.0
+  stt_delivery_pct: 0.1            # both sides
+  stt_intraday_sell_pct: 0.025     # sell side only
+  exchange_txn_pct: 0.00297        # NSE cash
+  sebi_fee_pct: 0.0001
+  gst_pct: 18.0                    # on brokerage + exchange + sebi
+  stamp_duty_buy_delivery_pct: 0.015
+  stamp_duty_buy_intraday_pct: 0.003
+
+llm:
+  backend: ollama
+  model: qwen3:4b
+  fallback_model: llama3.2:3b
+  temperature: 0.0
+  debate_rounds: 2
+
+alerts:
+  telegram: true
+  desktop: true
+  daily_report_email: false
+
+research:
+  allowed_domains:
+    - nseindia.com
+    - bseindia.com
+    - sebi.gov.in
+    - rbi.org.in
+    - moneycontrol.com
+    - economictimes.indiatimes.com
+    - livemint.com
+    - business-standard.com
+    - reuters.com
+  fetch_timeout_s: 10
+  fetch_max_bytes: 2000000
